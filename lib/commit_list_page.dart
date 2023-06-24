@@ -52,6 +52,28 @@ class _CommitListPageState extends State<CommitListPage> {
     }
   }
 
+  String getFormattedDateTime(String dateTimeString) {
+    DateTime commitDateTime = DateTime.parse(dateTimeString);
+    DateTime currentDateTime = DateTime.now();
+    DateFormat timeFormat = DateFormat('HH:mm');
+    DateFormat dateTimeFormat = DateFormat('dd MMMM yyyy');
+    DateFormat dayFormat = DateFormat('EEEE');
+
+    if (commitDateTime.year == currentDateTime.year &&
+        commitDateTime.month == currentDateTime.month &&
+        commitDateTime.day == currentDateTime.day) {
+      return timeFormat.format(commitDateTime);
+    } else if (commitDateTime.year == currentDateTime.year &&
+        commitDateTime.month == currentDateTime.month &&
+        currentDateTime.day - commitDateTime.day == 1) {
+      return 'Yesterday';
+    } else if (currentDateTime.difference(commitDateTime).inDays <= 7) {
+      return dayFormat.format(commitDateTime);
+    } else {
+      return dateTimeFormat.format(commitDateTime);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,51 +148,14 @@ class _CommitListPageState extends State<CommitListPage> {
                                 ),
                               ],
                             ),
-                            Column(
-                              children: [
-                                Text(
-                                  (() {
-                                    DateTime commitDateTime =
-                                        DateTime.parse(commits[index].dateTime);
-                                    DateTime currentDateTime = DateTime.now();
-                                    DateFormat timeFormat = DateFormat('HH:mm');
-                                    DateFormat dateTimeFormat =
-                                        DateFormat('dd MMMM yyyy');
-                                    DateFormat dayFormat = DateFormat('EEEE');
-
-                                    if (commitDateTime.year ==
-                                            currentDateTime.year &&
-                                        commitDateTime.month ==
-                                            currentDateTime.month &&
-                                        commitDateTime.day ==
-                                            currentDateTime.day) {
-                                      return timeFormat.format(commitDateTime);
-                                    } else if (commitDateTime.year ==
-                                            currentDateTime.year &&
-                                        commitDateTime.month ==
-                                            currentDateTime.month &&
-                                        currentDateTime.day -
-                                                commitDateTime.day ==
-                                            1) {
-                                      return 'Yesterday';
-                                    } else if (currentDateTime
-                                            .difference(commitDateTime)
-                                            .inDays <=
-                                        7) {
-                                      return dayFormat.format(commitDateTime);
-                                    } else {
-                                      return dateTimeFormat
-                                          .format(commitDateTime);
-                                    }
-                                  })(),
-                                  textAlign: TextAlign.end,
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              getFormattedDateTime(commits[index].dateTime),
+                              textAlign: TextAlign.end,
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
